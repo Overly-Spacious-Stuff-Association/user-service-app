@@ -1,0 +1,15 @@
+name: User Service Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  call-reusable-workflow:
+    uses: Overly-Spacious-Stuff-Association/github-actions-repo/.github/workflows/ci.yml@main
+    with:
+      sonar_project_key: "Overly-Spacious-Stuff-Association_user-service-app"
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
