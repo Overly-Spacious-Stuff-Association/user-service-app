@@ -14,39 +14,81 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>userservice</name>
 
+    <!-- Define dependency and plugin versions -->
     <properties>
         <java.version>17</java.version>
 
-        <liquibase.version>4.20.0</liquibase.version>
+        <!-- Database & Migration -->
+        <liquibase.version>4.27.0</liquibase.version>
+        <postgresql.version>42.7.3</postgresql.version>
+
+        <!-- Development Tools -->
         <mapstruct.version>1.5.5.Final</mapstruct.version>
-        <lombok.version>1.18.30</lombok.version>
+        <lombok.version>1.18.32</lombok.version>
         <lombok.mapstruct.binding.version>0.2.0</lombok.mapstruct.binding.version>
-        <grpc.spring.boot.starter.version>5.0.0</grpc.spring.boot.starter.version>
-        <grpc.server.spring.boot.starter.version>2.9.0.RELEASE</grpc.server.spring.boot.starter.version>
-        <grpc.stub.version>1.42.1</grpc.stub.version>
-        <grpc.protobuf.version>1.53.0</grpc.protobuf.version>
-        <proto.google.common.protos.version>2.41.0</proto.google.common.protos.version>
+
+        <!-- gRPC & Protocol Buffers -->
+        <grpc.version>1.63.0</grpc.version>
+        <protobuf.version>3.25.5</protobuf.version>
+        <protoc.version>3.25.5</protoc.version>
+        <grpc.spring.starter.version>5.1.5</grpc.spring.starter.version>
+        <grpc.server.spring.starter.version>2.9.0.RELEASE</grpc.server.spring.starter.version>
+        <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
+
+        <!-- Documentation -->
+        <swagger.version>2.2.20</swagger.version>
+        <springdoc.version>2.3.0</springdoc.version>
 
         <!-- Plugin Versions -->
         <os.maven.plugin.version>1.7.0</os.maven.plugin.version>
-        <protobuf.maven.plugin.version>0.5.1</protobuf.maven.plugin.version>
+        <protobuf.maven.plugin.version>0.6.1</protobuf.maven.plugin.version>
         <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
-        <protoc.version>3.6.1</protoc.version>
+        <protoc.version>3.25.5</protoc.version>
         <grpc.java.version>1.22.1</grpc.java.version>
         <sonar.version>3.9.1.2184</sonar.version>
         <jacoco.version>0.8.8</jacoco.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>confluent</id>
+            <url>https://packages.confluent.io/maven/</url>
+        </repository>
+    </repositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-bom</artifactId>
+                <version>${grpc.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
+        <!-- Spring Boot Starters -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-        <!-- PostgreSQL Database Driver -->
+        <!-- Database -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -57,28 +99,24 @@
             <version>${liquibase.version}</version>
         </dependency>
 
-        <!-- MapStruct for object mapping -->
+        <!-- Development Tools -->
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>${mapstruct.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct-processor</artifactId>
             <version>${mapstruct.version}</version>
             <scope>provided</scope>
         </dependency>
-
-        <!-- Lombok for reducing boilerplate code -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok-mapstruct-binding</artifactId>
@@ -86,21 +124,38 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-
         <!-- gRPC -->
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-services</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-netty-shaded</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-protobuf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-stub</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>${javax.annotation-api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java-util</artifactId>
+            <version>${protobuf.version}</version>
+        </dependency>
         <dependency>
             <groupId>io.github.lognet</groupId>
             <artifactId>grpc-spring-boot-starter</artifactId>
-            <version>${grpc.spring.boot.starter.version}</version>
+            <version>${grpc.spring.starter.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.lognet.springboot.grpc</groupId>
@@ -111,23 +166,25 @@
         <dependency>
             <groupId>net.devh</groupId>
             <artifactId>grpc-server-spring-boot-starter</artifactId>
-            <version>${grpc.server.spring.boot.starter.version}</version>
+            <version>${grpc.server.spring.starter.version}</version>
+        </dependency>
+
+        <!-- Logging with SLF4J -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+        </dependency>
+
+        <!-- OpenAPI Swagger Documentation -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${springdoc.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-stub</artifactId>
-            <version>${grpc.stub.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-protobuf</artifactId>
-            <version>${grpc.protobuf.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.api.grpc</groupId>
-            <artifactId>proto-google-common-protos</artifactId>
-            <version>${proto.google.common.protos.version}</version>
-            <scope>compile</scope>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>${swagger.version}</version>
         </dependency>
     </dependencies>
 
@@ -139,6 +196,7 @@
                 <version>${os.maven.plugin.version}</version>
             </extension>
         </extensions>
+
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -153,7 +211,7 @@
                 <configuration>
                     <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
                     <pluginId>grpc-java</pluginId>
-                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.java.version}:exe:${os.detected.classifier}</pluginArtifact>
+                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}</pluginArtifact>
                     <protoSourceRoot>${basedir}/src/main/resources/proto/</protoSourceRoot>
                 </configuration>
                 <executions>
@@ -194,31 +252,36 @@
                 </configuration>
             </plugin>
 
+            <!-- Quality & Security -->
             <plugin>
                 <groupId>org.sonarsource.scanner.maven</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
                 <version>${sonar.version}</version>
             </plugin>
-
-            <!-- Jacoco Code Coverage Plugin -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco.version}</version>
                 <executions>
                     <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
+                        <id>prepare-agent</id>
+                        <goals><goal>prepare-agent</goal></goals>
                     </execution>
                     <execution>
                         <id>report</id>
                         <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
+                        <goals><goal>report</goal></goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>**/dto/**</exclude>
+                        <exclude>**/entity/**</exclude>
+                        <exclude>**/config/**</exclude>
+                        <exclude>**/exception/**</exclude>
+                        <exclude>**/*Application.*</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
