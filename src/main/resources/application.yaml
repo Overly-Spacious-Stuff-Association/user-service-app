@@ -27,3 +27,6 @@ spring:
     enabled: true
     default-schema: userservice
     change-log: classpath:/db/changelog/db.changelog-master.yaml
+
+grpc:
+  port: 6565
